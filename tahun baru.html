@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Tahun Baru 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            animation: glow 1.5s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6;
+            }
+            to {
+                text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+            }
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Selamat Tahun Baru 2025!</h1>
+    </div>
+    <canvas id="fireworks"></canvas>
+    <script>
+        const canvas = document.getElementById('fireworks');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+class Firework {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.particles = [];
+        this.createParticles();
+    }
+
+    createParticles() {
+        const numParticles = 100;
+        const angleIncrement = (Math.PI * 2) / numParticles;
+        for (let i = 0; i < numParticles; i++) {
+            const angle = i * angleIncrement;
+            const speed = Math.random() * 5 + 2;
+            const vx = Math.cos(angle) * speed;
+            const vy = Math.sin(angle) * speed;
+            const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            this.particles.push(new Particle(this.x, this.y, vx, vy, color));
+        }
+    }
+
+    update() {
+        this.particles.forEach(particle => particle.update());
+    }
+
+    draw() {
+        this.particles.forEach(particle => particle.draw());
+    }
+}
+
+class Particle {
+    constructor(x, y, vx, vy, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.color = color;
+        this.alpha = 1;
+    }
+
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.05; // gravity
+        this.alpha -= 0.01;
+    }
+
+    draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+const fireworks = [];
+
+function animate() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height );
+    fireworks.forEach((firework, index) => {
+        firework.update();
+        firework.draw();
+        if (firework.particles[0].alpha <= 0) {
+            fireworks.splice(index, 1);
+        }
+    });
+    requestAnimationFrame(animate);
+}
+
+function createFirework() {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height / 2; // Start from the top half of the screen
+    fireworks.push(new Firework(x, y));
+}
+
+setInterval(createFirework, 500); // Create a firework every 500ms
+animate();
+    </script>
+</body>
+</html>
